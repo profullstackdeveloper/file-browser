@@ -4,7 +4,7 @@ const getRoot = async (req, res) => {
     const url = req.body.url;
     let baseRoot = process.env.BASE_ROOT;
     fs.readdir(baseRoot + url, async (err, files) => {
-        if (files && files.length > 0) {
+        if (files && files.length >= 0) {
             const result = await Promise.all(files.map((file) => {
                 return new Promise((resolve, reject) => {
                     fs.lstat(baseRoot + url + '/' + file, (err, status) => {

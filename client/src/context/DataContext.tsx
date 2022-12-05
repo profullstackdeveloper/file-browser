@@ -1,10 +1,10 @@
 import React, { SetStateAction, Dispatch } from 'react';
 import { fetchRoot } from '../api/service';
-import { FolderStructureType, TargetStructureType } from '../utils/types';
+import { FolderStructureType } from '../utils/types';
 
 export interface ContextType {
-    root: string;
-    setRoot: Dispatch<SetStateAction<string>>;
+    root: string | undefined;
+    setRoot: Dispatch<SetStateAction<string | undefined>>;
     folderStructure: FolderStructureType[];
     setFolderStructure: Dispatch<SetStateAction<FolderStructureType[]>>;
 }
@@ -13,11 +13,8 @@ export const DataContext = React.createContext({} as ContextType);
 
 export default function DataProvider({ children }: { children: React.ReactNode }): JSX.Element {
 
-    const [root, setRoot] = React.useState<string>('/');
-    const [folderStructure, setFolderStructure] = React.useState<FolderStructureType[]>([{
-        name: 'Root',
-        type: TargetStructureType.DIRECTORY,
-    }]);
+    const [root, setRoot] = React.useState<string>();
+    const [folderStructure, setFolderStructure] = React.useState<FolderStructureType[]>([]);
 
     const setStructure = async (url: string) => {
         const result = await fetchRoot(url);
@@ -27,12 +24,12 @@ export default function DataProvider({ children }: { children: React.ReactNode }
     }
 
     React.useEffect(() => {
-        setStructure('/');
-    }, []);
-
-    React.useEffect(() => {
-        console.log('root is ', root, folderStructure)
-    }, [root, folderStructure]);
+        if (root) {
+            setStructure(root);
+        } else {
+            setStructure('/');
+        }
+    }, [root])
 
     return (
         <DataContext.Provider
