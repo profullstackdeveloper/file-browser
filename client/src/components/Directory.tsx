@@ -7,13 +7,17 @@ export default function Directory({ files }: { files: FolderStructureType }): JS
 
     const [isExpand, setIsExpand] = React.useState(false);
 
-    const { setRoot, setFolderStructure, folderStructure }: ContextType = React.useContext(DataContext);
+    const { root, setRoot, setFolderStructure, folderStructure }: ContextType = React.useContext(DataContext);
 
     const toggle = async (file: FolderStructureType) => {
         setIsExpand(!isExpand);
-
+        if(file.url) {
+            setRoot(file.url);
+        }
         if (!file.items && file.url) {
+            console.log('called')
             const response = await fetchRoot(file.url);
+            console.log(response.data);
             const targetArray = (file.url).split('/');
             setRoot(file.url);
             const tmp_folderStructure = folderStructure;
@@ -51,7 +55,7 @@ export default function Directory({ files }: { files: FolderStructureType }): JS
             </div>
             : <>
                 <div style={{ marginLeft: '20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 'fit-content', cursor: 'pointer', height: 'fit-content' }} onClick={() => { toggle(files) }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 'fit-content', cursor: 'pointer', height: 'fit-content', backgroundColor: `${files.url === root ? 'blue' : ''}` }} onClick={() => { toggle(files) }}>
                         <img src='/folder-outline-filled.png' alt='folder' style={{ width: '30px', height: '30px' }}></img>
                         <div>{files.name}</div>
                     </div>
